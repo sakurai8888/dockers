@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address Search</title>
+    <style>
+        #results {
+            border: 1px solid #ccc;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .result-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .result-item:hover {
+            background-color: #f0f0f0;
+        }
+        /* Add some padding to the form */
+        form {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Address Search</h1>
+    
+    <input type="text" id="search" placeholder="Search addresses..." />
+    <div id="results"></div>
+    
+    <!-- Address Form -->
+    <form id="addressForm">
+        <input type="text" id="building" placeholder="Building" readonly />
+        <input type="number" id="floor" placeholder="Floor" readonly />
+        <input type="number" id="flat" placeholder="Flat" readonly />
+        <input type="text" id="streetNumber" placeholder="Street Number" readonly />
+        <input type="text" id="streetName" placeholder="Street Name" readonly />
+        <input type="text" id="city" placeholder="City" readonly />
+        <input type="text" id="country" placeholder="Country" readonly />
+        <input type="text" id="fullAddress" placeholder="Full Address" readonly />
+    </form>
+
+    <script>
+        const searchInput = document.getElementById('search');
+        const resultsContainer = document.getElementById('results');
+        const addressForm = document.getElementById('addressForm');
+        
+        searchInput.addEventListener('input', async () => {
+            const query = searchInput.value;
+            if (query.length >= 3) {
+                const response = await fetch(`/api/addresses?query=${query}`);
+                const results = await response.json();
+                resultsContainer.innerHTML = results.map(address => 
+                    `<div class="result-item" data-address='${JSON.stringify(address)}'>${address.full_address}</div>`
+                ).join('');
+            } else {
+                resultsContainer.innerHTML = '';
+            }
+        });
+
+        resultsContainer.addEventListener('click', (event) => {
+            if (event.target.classList.contains('result-item')) {
+                const address = JSON.parse(event.target.getAttribute('data-address'));
+                
+                // Fill in the form with the selected address information
+                document.getElementById('building').value = address.building;
+                document.getElementById('floor').value = address.floor;
+                document.getElementById('flat').value = address.flat;
+                document.getElementById('streetNumber').value = address.street_number;
+                document.getElementById('streetName').value = address.street_name;
+                document.getElementById('city').value = address.city;
+                document.getElementById('country').value = address.country;
+                document.getElementById('fullAddress').value = address.full_address;
+
+                // Clear the search input and results
+                searchInput.value = '';
+                resultsContainer.innerHTML = '';
+            }
+        });
+    </script>
+</body>
+</html>
