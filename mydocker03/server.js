@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const mongourl = 'mongodb://admin:Aa12345678@127.0.0.1:27017/mydb01?authSource=admin';
+const mongourl = 'mongodb://admin:Aa12345678@mongodb:27017/mydb01?authSource=admin';
 
 // Middleware
 app.use(cors());
@@ -37,7 +37,7 @@ app.get('/api/addresses', async (req, res) => {
         return res.status(400).json({ message: "Query must be at least 3 characters long." });
     }
     console.log(`Searching for addresses with query: "${query}"`);
-    const addresses = await Address.find({ full_address: { $regex: query, $options: 'i' } }).limit(10);
+    const addresses = await Address.find({ full_address: { $regex: query, $options: 'i' } }).limit(30);
     console.log(`Found addresses: ${JSON.stringify(addresses)}`);
     res.json(addresses);
 });
