@@ -22,8 +22,19 @@ services:
       - "3000:3000"
     depends_on:
       - mongodb
+      - redis  # Add a dependency on the Redis service
     environment:
       MONGO_URI: mongodb://admin:Aa12345678@mongodb:27017/mydb01?authSource=admin  # Update with your database name
+      REDIS_HOST: redis  # Add this line to specify the Redis service name
+      REDIS_PORT: 6379    # Optional: Specify the Redis port (default is 6379)
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7.2  # Specify the Redis image to use
+    container_name: redis
+    ports:
+      - "6379:6379"  # Expose Redis on port 6379
     networks:
       - app-network
 
