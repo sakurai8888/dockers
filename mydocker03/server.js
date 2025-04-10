@@ -50,8 +50,17 @@ const loadAddressesToRedis = () => {
             return;
         }
         const addresses = JSON.parse(data);
+        // addresses.forEach(address => {
+        //     redisClient.set(address.id, JSON.stringify(address), (err) => {
+        //         if (err) {
+        //             console.error('Error storing address in Redis:', err);
+        //         } else {
+        //             console.log(`Stored address with ID ${address.id} in Redis.`);
+        //         }
+        //     });
+        // });
         addresses.forEach(address => {
-            redisClient.set(address.id, JSON.stringify(address), (err) => {
+            redisClient.set(`addressid:${address.building}`, JSON.stringify(address), (err) => {
                 if (err) {
                     console.error('Error storing address in Redis:', err);
                 } else {
@@ -59,12 +68,22 @@ const loadAddressesToRedis = () => {
                 }
             });
         });
+
+        /*
+        addresses.forEach( thisaddress =>{
+            const mybuilding = thisaddress.building;
+            console.log(`This is: ${mybuilding}`);
+
+        });
+
+        */
+
     });
 };
 
 
 // Load addresses when the server starts
-//loadAddressesToRedis();
+loadAddressesToRedis();
 
 
 /*
@@ -107,6 +126,26 @@ app.get('/api/addresses', async (req, res) => {
     const addresses = await Address.find({ full_address: { $regex: query, $options: 'i' } }).limit(30);
     console.log(`Found addresses: ${JSON.stringify(addresses)}`);
     res.json(addresses);
+});
+
+
+//  To test .. just execute  'http://localhost:3000/api/rediscacheaddress/864'
+app.get('/api/rediscacheaddress/:key', async (req, res) => {
+    const key = req.params.key;
+
+    try {
+        console.log(`${key}`)
+        const value = await redisClient.get(`addressid:${key}`); // Get value from Redis
+        if (value) {
+            const data = JSON.parse(value); // Convert back to JSON object
+            res.json(data); // Respond with JSON
+        } else {
+            res.status(404).send('Data not found.');
+        }
+    } catch (err) {
+        console.error('Error retrieving data from Redis:', err);
+        res.status(500).send('Error retrieving data.');
+    }
 });
 
 // Serve static files
