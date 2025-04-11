@@ -6,26 +6,23 @@ const redis = require('redis');
 const path = require('path');
 const fs = require('fs');
 const userRoutes = require('./routes/userRoutes'); // Import user routes   
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 const mongourl = 'mongodb://admin:Aa12345678@mongodb:27017/mydb01?authSource=admin';
+require('dotenv').config();    // Load .env data.
 
-require('dotenv').config();
 
 
-/*
-Load to Redis Start
-*/
 
+
+
+// Start try to connect Redis.
 const redisClient = redis.createClient({
     socket: {
       host: process.env.REDIS_HOST,
       port: process.env.REDIS_PORT,
     },
   });
-
-
   
 (async () => {
     await redisClient.connect();
@@ -43,15 +40,18 @@ redisClient.on('error', (err) => {
 
 
 
-const myfunction = () => {
-    const myvar = process.env.NY_LOCAL_ENV_DB_HOST;
-    console.log(`${myvar}`);
-};
+// End try to connect Redis.
 
-myfunction()
+
+
+
+
+/*
+Load to Redis Start
+*/
 
 const loadAddressesToRedis = () => {
-    const jsonFilePath = path.join(__dirname, 'randomaddress.json');
+    const jsonFilePath = path.join(__dirname, './data/randomaddress.json');
 
     fs.readFile(jsonFilePath, 'utf8', (err, data) => {
         if (err) {
@@ -90,8 +90,6 @@ const loadAddressesToRedis = () => {
     });
 };
 
-//loadenvvariable{};
-// Load addresses when the server starts
 loadAddressesToRedis();
 
 
