@@ -5,11 +5,13 @@ const bodyParser = require('body-parser');
 const redis = require('redis');
 const path = require('path');
 const fs = require('fs');
+const userRoutes = require('./routes/userRoutes'); // Import user routes   
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const mongourl = 'mongodb://admin:Aa12345678@mongodb:27017/mydb01?authSource=admin';
 
+require('dotenv').config();
 
 
 /*
@@ -40,6 +42,13 @@ redisClient.on('error', (err) => {
 
 
 
+
+const myfunction = () => {
+    const myvar = process.env.NY_LOCAL_ENV_DB_HOST;
+    console.log(`${myvar}`);
+};
+
+myfunction()
 
 const loadAddressesToRedis = () => {
     const jsonFilePath = path.join(__dirname, 'randomaddress.json');
@@ -81,9 +90,10 @@ const loadAddressesToRedis = () => {
     });
 };
 
-
+//loadenvvariable{};
 // Load addresses when the server starts
 loadAddressesToRedis();
+
 
 
 /*
@@ -148,8 +158,19 @@ app.get('/api/rediscacheaddress/:key', async (req, res) => {
     }
 });
 
+
+// Use any custom routes 
+
+// Use userRoutes. 
+
+app.use('/myusers', userRoutes);
+
+
 // Serve static files
 app.use(express.static('public'));
+
+
+
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);

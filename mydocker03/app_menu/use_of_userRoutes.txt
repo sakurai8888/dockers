@@ -1,0 +1,26 @@
+GET http://localhost:3000/users
+
+
+GET http://localhost:3000/users/1
+
+
+
+### Add a user 
+POST http://localhost:3000/users
+
+
+{
+    "name": "John Doe",
+    "email": "john.doe@example.com"
+}
+
+
+
+
+
+PUT http://localhost:3000/users/1
+
+{
+    "name": "John Updated",
+    "email": "john.updated@example.com"
+}
