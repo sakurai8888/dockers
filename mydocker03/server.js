@@ -6,6 +6,7 @@ const redis = require('redis');
 const path = require('path');
 const fs = require('fs');
 const userRoutes = require('./routes/userRoutes'); // Import user routes   
+const sessionRoutes = require('./routes/sessionRoutes'); // Import user routes   
 const app = express();
 const PORT = process.env.PORT || 3000;
 const mongourl = 'mongodb://admin:Aa12345678@mongodb:27017/mydb01?authSource=admin';
@@ -163,6 +164,7 @@ app.get('/api/rediscacheaddress/:key', async (req, res) => {
 
 app.use('/myusers', userRoutes);
 
+app.use('/sessions', sessionRoutes);
 
 // Serve static files
 app.use(express.static('public'));
