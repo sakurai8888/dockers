@@ -1,3 +1,4 @@
+// Load library
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -5,15 +6,30 @@ const bodyParser = require('body-parser');
 const redis = require('redis');
 const path = require('path');
 const fs = require('fs');
-const userRoutes = require('./routes/userRoutes'); // Import user routes   
-const sessionRoutes = require('./routes/sessionRoutes'); // Import user routes   
-const app = express();
+const cookieParser = require('cookie-parser');
+
+// Init Parameters
+require('dotenv').config();    // Load .env data.
 const PORT = process.env.PORT || 3000;
 const mongourl = 'mongodb://admin:Aa12345678@mongodb:27017/mydb01?authSource=admin';
-require('dotenv').config();    // Load .env data.
 
 
+// Init express app.
+const app = express();
 
+// LOAD Middleware
+app.use(cors());
+app.use(bodyParser.json());
+app.use(express.json());
+app.use(cookieParser()); // Use cookie-parser middleware
+
+// Serve static files
+app.use(express.static('public'));
+
+// Load Routes
+const userRoutes = require('./routes/userRoutes'); // Import user routes   
+const sessionRoutes = require('./routes/sessionRoutes'); // Import user routes   
+const authRoutes = require('./routes/auth'); // Import the auth routes
 
 
 
@@ -93,6 +109,7 @@ const loadAddressesToRedis = () => {
 
 loadAddressesToRedis();
 
+console.log(`Log ${process.env.REDIS_HOST}`);
 
 
 /*
@@ -100,11 +117,13 @@ Load to Redis End
 */
 
 
-console.log(`Log ${process.env.REDIS_HOST}`);
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
+
+
+
+
+
+
 
 // Connect to MongoDB
 mongoose.connect(mongourl, {
@@ -159,19 +178,13 @@ app.get('/api/rediscacheaddress/:key', async (req, res) => {
 
 
 // Use any custom routes 
-
-// Use userRoutes. 
-
+// Use Routes. 
 app.use('/myusers', userRoutes);
-
 app.use('/sessions', sessionRoutes);
-
-// Serve static files
-app.use(express.static('public'));
+app.use('/auth', authRoutes); 
 
 
-
-
+// Start express server
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
