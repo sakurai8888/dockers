@@ -17,6 +17,11 @@ const mongourl = 'mongodb://admin:Aa12345678@mongodb:27017/mydb01?authSource=adm
 // Init express app.
 const app = express();
 
+
+// Load functions 
+const loadAddressesToRedis = require('./utils/redisLoader'); // Import the utility function
+
+
 // LOAD Middleware
 app.use(cors());
 app.use(bodyParser.json());
@@ -57,69 +62,7 @@ redisClient.on('error', (err) => {
 
 
 
-// End try to connect Redis.
-
-
-
-
-
-/*
-Load to Redis Start
-*/
-
-const loadAddressesToRedis = () => {
-    const jsonFilePath = path.join(__dirname, './data/randomaddress.json');
-
-    fs.readFile(jsonFilePath, 'utf8', (err, data) => {
-        if (err) {
-            console.error('Error reading randomaddress.json:', err);
-            return;
-        }
-        const addresses = JSON.parse(data);
-        // addresses.forEach(address => {
-        //     redisClient.set(address.id, JSON.stringify(address), (err) => {
-        //         if (err) {
-        //             console.error('Error storing address in Redis:', err);
-        //         } else {
-        //             console.log(`Stored address with ID ${address.id} in Redis.`);
-        //         }
-        //     });
-        // });
-        addresses.forEach(address => {
-            redisClient.set(`addressid:${address.building}`, JSON.stringify(address), (err) => {
-                if (err) {
-                    console.error('Error storing address in Redis:', err);
-                } else {
-                    console.log(`Stored address with ID ${address.id} in Redis.`);
-                }
-            });
-        });
-
-        /*
-        addresses.forEach( thisaddress =>{
-            const mybuilding = thisaddress.building;
-            console.log(`This is: ${mybuilding}`);
-
-        });
-
-        */
-
-    });
-};
-
 loadAddressesToRedis();
-
-console.log(`Log ${process.env.REDIS_HOST}`);
-
-
-/*
-Load to Redis End
-*/
-
-
-
-
-
 
 
 
