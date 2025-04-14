@@ -10,81 +10,33 @@ const cookieParser = require('cookie-parser');
 
 // Init Parameters
 require('dotenv').config();    // Load .env data.
-const PORT = process.env.PORT || 3000;
-const mongourl = 'mongodb://admin:Aa12345678@mongodb:27017/mydb01?authSource=admin';
-
+const PORT = process.env.PORT || 3000;   
 
 // Init express app.
 const app = express();
 
-
 // Load functions 
 const loadAddressesToRedis = require('./utils/redisLoader'); // Import the utility function
-
 
 // LOAD Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
 app.use(cookieParser()); // Use cookie-parser middleware
-
-// Serve static files
-app.use(express.static('public'));
+app.use(express.static('public')); // Serve static files
 
 // Load Routes
 const userRoutes = require('./routes/userRoutes'); // Import user routes   
 const sessionRoutes = require('./routes/sessionRoutes'); // Import user routes   
 const authRoutes = require('./routes/auth'); // Import the auth routes
 const mongoRoutes= require('./routes/mongoSearchRoutes');  // Import the mongo Search routes
+const redisRoutes= require('./routes/rediscacheRoutes');  // Import the mongo Search routes
 
 
 
-// Start try to connect Redis.
-const redisClient = redis.createClient({
-    socket: {
-      host: process.env.REDIS_HOST,
-      port: process.env.REDIS_PORT,
-    },
-  });
-  
-(async () => {
-    await redisClient.connect();
-})();
-
-
-redisClient.on('connect', () => {
-    console.log('Connected to Redis...');
-});
-
-redisClient.on('error', (err) => {
-    console.error('Redis error:', err);
-});
-
+//Initial load redisCache
 loadAddressesToRedis();
 
-
-
-
-
-
-//  To test .. just execute  'http://localhost:3000/api/rediscacheaddress/864'
-app.get('/api/rediscacheaddress/:key', async (req, res) => {
-    const key = req.params.key;
-
-    try {
-        console.log(`${key}`)
-        const value = await redisClient.get(`addressid:${key}`); // Get value from Redis
-        if (value) {
-            const data = JSON.parse(value); // Convert back to JSON object
-            res.json(data); // Respond with JSON
-        } else {
-            res.status(404).send('Data not found.');
-        }
-    } catch (err) {
-        console.error('Error retrieving data from Redis:', err);
-        res.status(500).send('Error retrieving data.');
-    }
-});
 
 
 // Use any custom routes 
@@ -93,6 +45,7 @@ app.use('/myusers', userRoutes);
 app.use('/sessions', sessionRoutes);
 app.use('/auth', authRoutes); 
 app.use('/mongo', mongoRoutes); 
+app.use('/redis', redisRoutes); 
 
 
 // Start express server
