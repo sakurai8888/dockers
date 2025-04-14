@@ -17,6 +17,8 @@ const app = express();
 
 // Load functions 
 const loadAddressesToRedis = require('./utils/redisLoader'); // Import the utility function
+const { formatDate, createResponse } = require('./utils/examplefunctions').default; // Import multiple functions
+
 
 // LOAD Middleware
 app.use(cors());
@@ -33,7 +35,6 @@ const mongoRoutes= require('./routes/mongoSearchRoutes');  // Import the mongo S
 const redisRoutes= require('./routes/rediscacheRoutes');  // Import the mongo Search routes
 
 
-
 //Initial load redisCache
 loadAddressesToRedis();
 
@@ -46,6 +47,29 @@ app.use('/sessions', sessionRoutes);
 app.use('/auth', authRoutes); 
 app.use('/mongo', mongoRoutes); 
 app.use('/redis', redisRoutes); 
+
+
+
+
+
+
+
+
+
+// Routes to test multiple functions 
+
+
+app.get('/testdate', (req, res) => {
+    const currentDate = new Date(); // Get current date
+    const formattedDate = formatDate(currentDate); // Use the utility function
+
+    const response = createResponse(200, 'Date formatted successfully', { formattedDate });
+    res.json(response); // Send the standardized response
+});
+
+
+
+
 
 
 // Start express server
