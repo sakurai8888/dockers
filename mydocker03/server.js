@@ -35,6 +35,7 @@ app.use(express.static('public'));
 const userRoutes = require('./routes/userRoutes'); // Import user routes   
 const sessionRoutes = require('./routes/sessionRoutes'); // Import user routes   
 const authRoutes = require('./routes/auth'); // Import the auth routes
+const mongoRoutes= require('./routes/mongoSearchRoutes');  // Import the mongo Search routes
 
 
 
@@ -59,45 +60,11 @@ redisClient.on('error', (err) => {
     console.error('Redis error:', err);
 });
 
-
-
-
 loadAddressesToRedis();
 
 
 
 
-
-// Connect to MongoDB
-mongoose.connect(mongourl, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-
-const addressSchema = new mongoose.Schema({
-    building: String,
-    floor: Number,
-    flat: Number,
-    street_number: String,
-    street_name: String,
-    city: String,
-    country: String,
-    full_address: String
-});
-
-const Address = mongoose.model('mymongoaddresses', addressSchema, 'mymongoaddresses');
-
-// API to search addresses
-app.get('/api/addresses', async (req, res) => {
-    const { query } = req.query;
-    if (query.length < 3) {
-        return res.status(400).json({ message: "Query must be at least 3 characters long." });
-    }
-    console.log(`Searching for addresses with query: "${query}"`);
-    const addresses = await Address.find({ full_address: { $regex: query, $options: 'i' } }).limit(30);
-    console.log(`Found addresses: ${JSON.stringify(addresses)}`);
-    res.json(addresses);
-});
 
 
 //  To test .. just execute  'http://localhost:3000/api/rediscacheaddress/864'
@@ -125,6 +92,7 @@ app.get('/api/rediscacheaddress/:key', async (req, res) => {
 app.use('/myusers', userRoutes);
 app.use('/sessions', sessionRoutes);
 app.use('/auth', authRoutes); 
+app.use('/mongo', mongoRoutes); 
 
 
 // Start express server

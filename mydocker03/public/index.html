@@ -49,7 +49,7 @@
         searchInput.addEventListener('input', async () => {
             const query = searchInput.value;
             if (query.length >= 3) {
-                const response = await fetch(`/api/addresses?query=${query}`);
+                const response = await fetch(`/mongo/search?query=${query}`);
                 const results = await response.json();
                 resultsContainer.innerHTML = results.map(address => 
                     `<div class="result-item" data-address='${JSON.stringify(address)}'>${address.full_address}</div>`
