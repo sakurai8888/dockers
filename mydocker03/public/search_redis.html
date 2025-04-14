@@ -49,7 +49,7 @@
         searchInput.addEventListener('input', async () => {
             const query = searchInput.value;
             if (query.length >= 3) {
-                const response = await fetch(`/api/rediscacheaddress/${query}`);
+                const response = await fetch(`/redis/search/${query}`);
                 const results = await response.json();
                 console.log(`${results.full_address}`);
                 // resultsContainer.innerHTML = results.map(address => 
