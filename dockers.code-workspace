@@ -5,6 +5,9 @@
 		},
 		{
 			"path": "../../pythonrepo"
+		},
+		{
+			"path": "../../javascript_course/react/express_socket"
 		}
 	],
 	"settings": {}
