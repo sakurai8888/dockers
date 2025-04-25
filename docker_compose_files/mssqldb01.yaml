@@ -1,0 +1,33 @@
+
+version: '3.8'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: mssql_container
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "YourStrong!Password"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - mssql_data:/var/opt/mssql
+  mssql2022:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql2022_container
+    ports:
+      - "1434:1433"
+    environment:
+      SA_PASSWORD: "YourStrong!Password"
+      ACCEPT_EULA: "Y"
+    volumes:
+      - mssql2022_data:/var/opt/mssql
+volumes:
+  mssql_data:
+  mssql2022_data:
+
+
+
+# Define a volume to persist database data
+# how to start
+# docker-compose -f docker_compose_files/mssqldb01.yaml up -d
