@@ -14,4 +14,16 @@ ollama run gemma3            3.3GB
 
 -- Run Open Web UI
 
-docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart always ghcr.io/open-webui/open-webui:main
+docker run -d -p 3000:8080 --add-host=host.docker.internal:host-gateway -v open-webui:/app/backend/data --name open-webui --restart no ghcr.io/open-webui/open-webui:main
+
+
+docker run -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=Password_123#" -p 1433:1433 --name sql_server_container -d mcr.microsoft.com/mssql/server
+
+
+  docker run -d -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=_yourPassw0rd_" -p 1433:1433 -v F:\Docker_volume:/var/opt/mssql --name mssql01 mcr.microsoft.com/mssql/server
+
+
+docker update --restart=no open-webui
+
+
+  docker run -d -e "ACCEPT_EULA=Y" -e "SA_PASSWORD=_yourPassw0rd_" -p 1433:1433 -v F:\Docker_volume:/var/opt/mssql --name mssql01 mcr.microsoft.com/mssql/server

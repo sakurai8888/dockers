@@ -57,3 +57,23 @@ docker-compose  -f .\docker-compose-mongodb.yaml  up -d
 -- Stop the compose 
 
 docker-compose  -f .\docker-compose-mongodb.yaml  down
+
+
+
+
+
+
+
+
+
+
+
+
+
+### MSSQL Database Run
+
+
+
+docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=Aa12345678' -e "MSSQL_PID=Developer" -p 1433:1433 -v mssql01_vol01:/var/opt/mssql --name mssql01 -d mcr.microsoft.com/mssql/server:2022-latest 
+
+
