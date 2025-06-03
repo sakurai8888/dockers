@@ -1,0 +1,5 @@
+fastapi[standard]==0.115.12
+passlib==1.7.4
+python_jose==3.5.0
+python-multipart==0.0.20
+uvicorn==0.34.2

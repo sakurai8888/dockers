@@ -77,3 +77,6 @@ docker-compose  -f .\docker-compose-mongodb.yaml  down
 docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=Aa12345678' -e "MSSQL_PID=Developer" -p 1433:1433 -v mssql01_vol01:/var/opt/mssql --name mssql01 -d mcr.microsoft.com/mssql/server:2022-latest 
 
 
+
+-- start FastAPI
+docker run -d --name fastapi01 -p 80:80 fasapi01

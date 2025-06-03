@@ -1,0 +1,29 @@
+from fastapi import APIRouter, Path, Query, Body, HTTPException
+from fastapi.responses import JSONResponse
+import uuid
+
+
+router = APIRouter(
+    prefix="/getproduct",
+    tags=["getproduct"],
+    responses={404: {"description": "Not found"}},
+)
+
+
+@router.get("/{product_id}")
+async def getproduct(
+    product_id: int = Path(..., title="The ID of the product to retrieve"),
+    product_type: str = Query(..., title="The type of the product", description="Type of the product to filter results")
+    ):
+    return {"product_id": product_id, "message": "Product details retrieved successfully.:"+ product_type}
+
+
+
+
+@router.post("/{product_id}/update")
+async def update_product(
+    product_id: int = Path(..., title="The ID of the product to update"),
+    new_data: dict = Body(..., media_type="application/json", embedded=True),
+):
+    product_name = new_data.get("Product Name")
+    return JSONResponse({"message": f"Product {product_id} updated successfully.", "Data": product_name}, status_code=200)
