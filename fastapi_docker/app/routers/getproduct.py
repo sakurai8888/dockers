@@ -13,10 +13,19 @@ router = APIRouter(
 @router.get("/{product_id}")
 async def getproduct(
     product_id: int = Path(..., title="The ID of the product to retrieve"),
-    product_type: str = Query(..., title="The type of the product", description="Type of the product to filter results")
-    ):
-    return {"product_id": product_id, "message": "Product details retrieved successfully.:"+ product_type}
-
+    product_type: str = Query(..., title="The type of the product", description="Type of the product to filter results",required=True),
+    product_name: str = Query("No Name specified", title="The name of the product", description="Name of the product to filter results"),
+    price: float = Query(None, title="The price of the product", description="Price of the product to filter results"),
+    quantity: int = Query(None, title="The quantity of the product", description="Quantity of the product to filter results")
+):
+    return {
+        "product_id": product_id,
+        "product_type": product_type,
+        "product_name": product_name,
+        "price": price,
+        "quantity": quantity,
+        "message": "Product details retrieved successfully."
+    }
 
 
 
