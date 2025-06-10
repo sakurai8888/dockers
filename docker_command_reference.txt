@@ -80,14 +80,14 @@ docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=Aa12345678' -e "MSSQL_PID=De
 
 
 
+
+
+
+
+
 #### Fast API 
-
 -- Build 
-
 docker build -t fastapi01 .
 
 -- start FastAPI
-docker run -d --name fastapi01 -p 80:80 fasapi01
-
-
 docker run -d --name fastapi01 -p 8000:80 fastapi01
