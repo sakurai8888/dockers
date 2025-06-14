@@ -81,9 +81,24 @@ docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=Aa12345678' -e "MSSQL_PID=De
 
 
 
-#### Fast API 
+#### Fast API
+
+## Folder structure 
+/app              <<< FastApi Source Code
+Dockerfile
+requirement.txt
+
 -- Build 
 docker build -t fastapi01 .
 
 -- start FastAPI
 docker run -d --name fastapi01 -p 8000:80 fastapi01
+
+
+
+
+
+
+#### Postgresql 
+
+docker run --name postgresql01 -e POSTGRES_PASSWORD=Aa12345678 -e PGDATA=/var/lib/postgresql/data/pgdata -p 5432:5432 -v postgresql_vol01:/var/lib/postgresql/data -d postgres
