@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgresql01
+    environment:
+      POSTGRES_USER: postgres  # Default admin username
+      POSTGRES_PASSWORD: Aa12345678  # Change this!
+      POSTGRES_DB: mydb  # Optional default database
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data-vol01:/var/lib/postgresql/data
+
+volumes:
+  postgres-data-vol01:  # Named volume for data persistence

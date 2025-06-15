@@ -102,3 +102,11 @@ docker run -d --name fastapi01 -p 8000:80 fastapi01
 #### Postgresql 
 
 docker run --name postgresql01 -e POSTGRES_PASSWORD=Aa12345678 -e PGDATA=/var/lib/postgresql/data/pgdata -p 5432:5432 -v postgresql_vol01:/var/lib/postgresql/data -d postgres
+
+
+### Or using docker compose file 
+
+docker-compose -f .\docker-compose-postgresql.yaml up -d
+
+
+docker-compose  -f .\docker-compose-postgresql.yaml  down
