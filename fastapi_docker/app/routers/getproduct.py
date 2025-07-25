@@ -24,7 +24,7 @@ async def getproduct(
         "product_name": product_name,
         "price": price,
         "quantity": quantity,
-        "message": "Product details retrieved successfully."
+        "message": "Product details retrieved successfully.Thanks"
     }
 
 
