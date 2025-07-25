@@ -22,6 +22,9 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Check password against hash"""
     return pwd_context.verify(plain_password, hashed_password)
 
+def display_hash(plain_password: str) -> str:
+    return pwd_context.hash(plain_password)
+
 
 
 def create_access_token(data: dict, password_input: str, expires_delta: timedelta = None) -> str:
