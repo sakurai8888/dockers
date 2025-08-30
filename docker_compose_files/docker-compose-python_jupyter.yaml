@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  jupyter:
+    image: jupyter/base-notebook:latest
+    container_name: jupyter-lab
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    volumes:
+      - notebooks_data:/home/jovyan/work
+    environment:
+      # Optional: set a token for security
+      JUPYTER_TOKEN: "mysecret"
+      TZ: "UTC"
+    command: start-notebook.sh --NotebookApp.token='' --NotebookApp.password=''
+
+volumes:
+  notebooks_data:
+    driver: local
