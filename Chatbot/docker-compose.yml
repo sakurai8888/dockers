@@ -1,0 +1,41 @@
+version: '3.9'
+services:
+  postgres:
+    image: pgvector/pgvector:pg17-trixie
+    container_name: vectordb
+    restart: always
+    environment:
+      POSTGRES_DB: chatbot
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build: ./backend
+    container_name: chatbot-backend
+    ports:
+      - "3001:3001"
+    environment:
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_HOST=postgres
+      - DB_NAME=chatbot
+      - DB_PORT=5432
+      - OLLAMA_URL=http://host.docker.internal:11434 # 👈 talk to Ollama on host
+    depends_on:
+      - postgres
+
+  frontend:
+    build: ./frontend
+    container_name: chatbot-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres-data:
