@@ -9,11 +9,13 @@ async function searchDocs(query) {
   return result.rows.map(r => r.content).join("\n");
 }
 
+
+
 export async function getChatResponse(userMessage) {
   const context = await searchDocs(userMessage);
 
   const payload = {
-    model: "phi3", // replace with your Ollama model
+    model: "phi3",
     messages: [
       { role: "system", content: "You are a helpful assistant." },
       { role: "user", content: `Context: ${context}\n\nQuestion: ${userMessage}` }
@@ -23,9 +25,27 @@ export async function getChatResponse(userMessage) {
   const response = await fetch(`${process.env.OLLAMA_URL}/api/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
 
-  const data = await response.json();
-  return data.message?.content || "No response from model";
+  let fullText = "";
+
+  return new Promise((resolve, reject) => {
+    response.body.on("data", (chunk) => {
+      const lines = chunk.toString("utf8").split("\n").filter(Boolean);
+      for (const line of lines) {
+        try {
+          const json = JSON.parse(line);
+          if (json.message?.content) {
+            fullText += json.message.content;
+          }
+        } catch (err) {
+          console.warn("⚠️ Skipping parse error on chunk:", line);
+        }
+      }
+    });
+
+    response.body.on("end", () => resolve(fullText.trim() || "No response from model"));
+    response.body.on("error", reject);
+  });
 }

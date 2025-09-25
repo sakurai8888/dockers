@@ -3,9 +3,10 @@ import { useState } from "react";
 export default function Home() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
+  const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:3001";
 
   async function sendMessage() {
-    const res = await fetch("http://localhost:3001/chat", {
+    const res = await fetch(`${API_URL}/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: input }),
@@ -20,7 +21,10 @@ export default function Home() {
       <h1>Chatbot UI</h1>
       <div style={{ marginBottom: "1em" }}>
         {messages.map((m, i) => (
-          <p key={i}><b>{m.sender}:</b> {m.text}</p>
+          <div key={i} style={{ marginBottom: "0.5em" }}>
+            <b>{m.sender}:</b>{" "}
+            <span style={{ whiteSpace: "pre-line" }}>{m.text}</span>
+          </div>
         ))}
       </div>
       <input
