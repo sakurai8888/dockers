@@ -3,6 +3,11 @@ import { Worker } from "worker_threads";
 import bodyParser from "body-parser";
 import cors from "cors";          // 👈 import cors
 import { getChatResponse } from "./chat.js";
+import { pbkdf2Sync } from "crypto";
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
+
+
 
 const app = express();
 
@@ -98,6 +103,66 @@ app.post("/cpu-workers", async (req, res) => {
 
   console.timeEnd("workers");
   res.json({ message: "done (workers)", results });
+});
+
+
+
+// 👉 Block your event loop running PBKDF2 3× sequentially
+app.post("/cpu-crypto-blocking", (req, res) => {
+  console.time("crypto-blocking");
+
+  const iterations = req.body?.iterations || 5e6;
+  const results = [
+    pbkdf2Sync("topsecret", "salt1", iterations, 64, "sha512").toString("hex"),
+    pbkdf2Sync("topsecret", "salt2", iterations, 64, "sha512").toString("hex"),
+    pbkdf2Sync("topsecret", "salt3", iterations, 64, "sha512").toString("hex"),
+  ];
+
+  console.timeEnd("crypto-blocking");
+  res.json({
+    message: "done (crypto-blocking)",
+    iterations,
+    results: results.map(r => r.slice(0, 16)), // show partial hash
+  });
+});
+
+
+
+
+// 👉 Run those same 3 tasks in parallel Worker Threads
+app.post("/cpu-crypto-workers", async (req, res) => {
+  console.time("crypto-workers");
+
+  const iterations = req.body?.iterations || 5e6;
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+
+  const runWorker = (iterations, salt) => {
+    return new Promise((resolve, reject) => {
+      const worker = new Worker(new URL("./worker-crypto.js", import.meta.url), {
+        workerData: { iterations, salt },
+      });
+      worker.on("message", resolve);
+      worker.on("error", reject);
+      worker.on("exit", (code) => {
+        if (code !== 0) reject(new Error(`Worker stopped with code ${code}`));
+      });
+    });
+  };
+
+  const tasks = [
+    runWorker(iterations, "salt1"),
+    runWorker(iterations, "salt2"),
+    runWorker(iterations, "salt3"),
+  ];
+
+  const results = await Promise.all(tasks);
+  console.timeEnd("crypto-workers");
+
+  res.json({
+    message: "done (crypto-workers)",
+    iterations,
+    results: results.map(r => r.slice(0, 16)),
+  });
 });
 
 
