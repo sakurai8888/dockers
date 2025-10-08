@@ -38,6 +38,25 @@ services:
       - NEXT_PUBLIC_BACKEND_URL=http://localhost:3001
     depends_on:
       - backend
+      
+  ingest-python:
+    build:
+      context: ./ingest-python     # 👈 points to folder containing main.py + Dockerfile
+    container_name: ingest-python
+    restart: always
+    ports:
+      - "8000:8000"                # exposes FastAPI endpoint http://localhost:8000
+    environment:
+      - DATABASE_URL=postgresql://user:password@postgres:5432/chatbot
+      - OLLAMA_URL=http://host.docker.internal:11434
+    depends_on:
+      - postgres
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # allows this container to contact Ollama on Windows host
+    volumes:
+      - ./ingest-python:/app       # optional: live‑mount your code for development
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    # if your Dockerfile already has CMD set, you can remove this 'command' line
 
 volumes:
   postgres-data:

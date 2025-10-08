@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+unstructured[pdf]
+pdfminer.six
+langchain
+langchain-community
+langchain-text-splitters
+pgvector
+psycopg[binary]
+ollama
