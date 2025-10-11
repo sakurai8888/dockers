@@ -107,10 +107,8 @@ router.post("/ask", async (req, res) => {
 
     // Step 1 - Create embedding
     const embedding = await createEmbedding(question);
-
     // Step 2 - Search PostgreSQL (vector similarity)
     const matches = await searchVectorDB(embedding, 5);
-
     // Step 3 - Send results + question to Ollama
     const answer = await generateLLMResponse(question, matches);
 
