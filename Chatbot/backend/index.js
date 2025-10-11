@@ -6,14 +6,14 @@ import { getChatResponse } from "./chat.js";
 import { pbkdf2Sync } from "crypto";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
-
+import ragRouter from "./ragRouter.js";
 
 
 const app = express();
 
 app.use(bodyParser.json());
 
-
+app.use("/api", ragRouter);
 
 function heavyTask(iterations = 5e8) {
   let sum = 0;
