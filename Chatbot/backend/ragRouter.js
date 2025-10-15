@@ -22,7 +22,7 @@ const myrouter = express.Router();
 // ----------------------------------------------------------
 // 🚀 Route: POST /api/ask
 // ----------------------------------------------------------
-router.post("/ask", async (req, res) => {
+myrouter.post("/ask", async (req, res) => {
   try {
     const { question } = req.body;
 
