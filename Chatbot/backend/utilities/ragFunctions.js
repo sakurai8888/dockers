@@ -17,7 +17,7 @@ dotenv.config();
 // Load environment variables
 const OLLAMA_URL = process.env.OLLAMA_URL || "http://localhost:11434";
 const EMBED_MODEL = process.env.EMBED_MODEL || "nomic-embed-text";
-const LLM_MODEL = process.env.LLM_MODEL || "gemma3";
+const LLM_MODEL = process.env.LLM_MODEL || "gpt-oss:20b";
 
 // ----------------------------------------------------------
 // 1️⃣ Create Embedding via Ollama

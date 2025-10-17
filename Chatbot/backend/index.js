@@ -12,7 +12,17 @@ import ragRouter from "./ragRouter.js";
 const app = express();
 
 app.use(bodyParser.json());
+//app.use(cors());
 
+
+// ✅ Enable CORS for your frontend
+// In dev, allow http://localhost:3000
+// (or use app.use(cors()) to allow everything)
+app.use(cors({
+  origin: ["http://localhost:3000","http://127.0.0.1:3000","http://0.0.0.0:3000"],
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type"],
+}));
 app.use("/api", ragRouter);
 
 function heavyTask(iterations = 5e8) {
@@ -23,14 +33,8 @@ function heavyTask(iterations = 5e8) {
   return sum;
 }
 
-// ✅ Enable CORS for your frontend
-// In dev, allow http://localhost:3000
-// (or use app.use(cors()) to allow everything)
-app.use(cors({
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type"],
-}));
+
+
 
 app.post("/chat", async (req, res) => {
   try {
