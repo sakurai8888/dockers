@@ -105,5 +105,89 @@ ANSWER:
     throw new Error("❌ Ollama did not return a valid response.");
   }
 
-  return response.data.response.trim();
+  const answer =  response.data.response.trim();
+
+  // Detect 'I don't know'pattern
+  const normalizedAnswer = answer
+    .toLowerCase()
+    .replace(/’/g, "'") // normalize curly apostrophe to straight
+    .trim();
+
+  if (
+    normalizedAnswer.includes("i don't know based on the provided context") ||
+    normalizedAnswer.includes("i dont know based on the provided context")
+  ) {
+    console.log("🤔 Model could not answer — generating fallback suggestions…");
+    const llmothersuggestions = await generateLLMSuggestions(question);
+    return llmothersuggestions.llmResponse ; // also return answer if you want original text
+  }
+
+  return answer;
+
 }
+
+
+
+
+
+// Fallback to the LLM another suggestion functions
+
+async function generateLLMSuggestions(question) {
+  console.log("🔍 Generating alternative hints and fetching recent documents...");
+
+  // --- 1️⃣ Fetch top 5 recent document titles from PostgreSQL ---
+  let latestFiles = [];
+  try {
+    const { rows } = await pool.query(
+      `select distinct filename from (select filename,created_at from document_chunks order by created_at desc limit 5)`
+    );
+    latestFiles = rows.map((r) => r.filename);
+  } catch (err) {
+    console.error("⚠️ Error fetching documents from PostgreSQL:", err.message);
+  }
+
+  // 🧩 Format list into human‑readable bullet points
+  const titlesText =
+    latestFiles.length > 0
+      ? latestFiles.map((title, i) => `${i + 1}. ${title}`).join("\n")
+      : "No recent topics found.";
+
+  // --- 2️⃣ Build new prompt to include those titles ---
+  const hintPrompt = `
+The user asked: "${question}"
+The assistant could not find the answer in the provided documents.
+
+Please just respond to the user with this message:
+
+"Please try to ask questions around the following news topics:"
+
+Here are the news topics (titles) you should mention, please be remind to return the following as a list like 1. 2......
+
+${titlesText}
+
+Do not add any extra commentary or unrelated text.
+`;
+
+  // --- 3️⃣ Generate response with Ollama ---
+  let responseText = "";
+  try {
+    const hintRes = await axios.post(`${OLLAMA_URL}/api/generate`, {
+      model: LLM_MODEL,
+      prompt: hintPrompt,
+      stream: false,
+    });
+    responseText = hintRes.data?.response?.trim() || "";
+  } catch (err) {
+    console.error("⚠️ Ollama suggestion generation failed:", err.message);
+  }
+
+  // --- 4️⃣ Return structured data ---
+  return {
+    message: "I don’t know based on the provided context.",
+    llmResponse: responseText,
+    files: latestFiles,
+  };
+}
+
+
+
