@@ -154,6 +154,7 @@ export default function Home() {
                   color: m.sender === "user" ? "#fff" : "inherit",
                   maxWidth: "75%",
                   wordBreak: "break-word",
+                  whiteSpace: "pre-wrap",
                 }}
               >
                 {m.text}

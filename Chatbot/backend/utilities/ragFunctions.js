@@ -149,7 +149,7 @@ async function generateLLMSuggestions(question) {
   // 🧩 Format list into human‑readable bullet points
   const titlesText =
     latestFiles.length > 0
-      ? latestFiles.map((title, i) => `${i + 1}. ${title}`).join("\n")
+      ? latestFiles.map((title, i) => `${i + 1}. ${title}`).join("\n\n")
       : "No recent topics found.";
 
   // --- 2️⃣ Build new prompt to include those titles ---
