@@ -139,7 +139,7 @@ async function generateLLMSuggestions(question) {
   let latestFiles = [];
   try {
     const { rows } = await pool.query(
-      `select distinct filename from (select filename,created_at from document_chunks order by created_at desc limit 5)`
+      `select distinct filename from (select filename,created_at from document_chunks order by created_at desc) limit 5`
     );
     latestFiles = rows.map((r) => r.filename);
   } catch (err) {
