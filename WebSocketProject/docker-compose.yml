@@ -1,0 +1,23 @@
+version: '3.9'
+services:
+  backend:
+    build:
+      context: ./my-websocket-server
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    container_name: websocket-server
+
+  frontend:
+    build:
+      context: ./my-nextjs-client/websocketclient-app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    container_name: nextjs-client
+    depends_on:
+      - backend
+    environment:
+      # This is the key part: The frontend container will connect to the backend
+      # container using its service name 'backend' as the hostname.
+      - NEXT_PUBLIC_WS_URL=ws://backend:8080
