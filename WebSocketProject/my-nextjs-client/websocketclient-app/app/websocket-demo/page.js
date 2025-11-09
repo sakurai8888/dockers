@@ -76,7 +76,6 @@ export default function WebSocketPage() {
     <main className={styles.main}>
       <div className={styles.container}>
         <h1 className={styles.title}>Real-Time WebSocket Client</h1>
-        {element}
         <p className={styles.status}>
           Connection Status: <span className={`${styles.statusIndicator} ${styles[connectionStatus.toLowerCase()]}`}></span> {connectionStatus}
         </p>

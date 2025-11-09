@@ -20,7 +20,19 @@ app.get('/', (req, res) => {
 });
 
 // Set up the WebSocket connection logic
-wss.on('connection', (ws) => {
+wss.on('connection', (ws,req) => {
+  // log client request details. 
+  const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+  const clientDetails = {
+    ip: clientIp,
+    url: req.url,
+    userAgent: req.headers['user-agent'],
+    origin: req.headers['origin'],
+  };
+  console.log('✅ New client connected!');
+  console.log('   Client Details:', JSON.stringify(clientDetails, null, 2));  
+  
+  // client connected. 
   console.log('✅ Client connected');
 
   // 1. Send an initial message to the client upon connection
