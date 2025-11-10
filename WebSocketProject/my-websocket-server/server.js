@@ -29,11 +29,15 @@ wss.on('connection', (ws,req) => {
     userAgent: req.headers['user-agent'],
     origin: req.headers['origin'],
   };
-  console.log('✅ New client connected!');
-  console.log('   Client Details:', JSON.stringify(clientDetails, null, 2));  
+  const fullUrl = new URL(req.url, `http://${req.headers.host}`);
+  const wsusername = fullUrl.searchParams.get('username');
+  ws.connectionusername = wsusername
+  console.log(`✅ New client ${ws.connectionusername} connected! }`);
+  console.log('   Client Details:', JSON.stringify(clientDetails.origin, null, 2));  
   
   // client connected. 
   console.log('✅ Client connected');
+  console.log(wss.clients.size);
 
   // 1. Send an initial message to the client upon connection
   ws.send('Welcome! You are connected to the WebSocket server.');
@@ -62,6 +66,34 @@ wss.on('connection', (ws,req) => {
     console.error('WebSocket error:', error);
   });
 });
+
+
+
+// Function to display details of connected clients
+function displayClientDetails() {
+  console.log('\n--- Connected Client Details ---');
+  if (wss.clients.size === 0) {
+    console.log('No clients currently connected.');
+    return;
+  }
+
+  wss.clients.forEach(client => {
+    // You can access default properties and any custom properties you've added
+    console.log(`Client ID: ${client.id || 'N/A'}`);
+    console.log(`Client Username: ${client.connectionusername || 'N/A'}`);
+    console.log(`  Ready State: ${client.readyState}`); // WebSocket.OPEN, WebSocket.CONNECTING, etc.
+    console.log(`  Last Message Time: ${new Date(client.lastMessageTime).toLocaleString()}`);
+    // You can also access information from the underlying HTTP request if needed
+    // console.log(`  Remote Address: ${client._socket.remoteAddress}`);
+    // console.log(`  User Agent: ${client.upgradeReq.headers['user-agent']}`);
+    console.log('------------------------------');
+  });
+}
+
+// Call the function periodically or on demand to see client details
+setInterval(displayClientDetails, 20000); // Display details every 5 seconds
+
+
 
 // Start the server
 server.listen(PORT, () => {

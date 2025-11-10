@@ -4,65 +4,92 @@ import { useState, useEffect, useRef } from 'react';
 import styles from './page.module.css';
 
 export default function WebSocketPage() {
+  const [username, setUsername] = useState('');
   const [message, setMessage] = useState('');
   const [receivedMessages, setReceivedMessages] = useState([]);
-  const [socket, setSocket] = useState(null);
-  const [connectionStatus, setConnectionStatus] = useState('Connecting...');
-
-  // Ref to hold the WebSocket instance
+  const [connectionStatus, setConnectionStatus] = useState('Disconnected');
   const socketRef = useRef(null);
-  const element = <h1>hello</h1>;
 
   useEffect(() => {
-    // Ensure this code only runs in the browser
-    if (typeof window === 'undefined') {
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
+  }, []);
+
+  const handleConnect = () => {
+    if (!username.trim()) {
+      alert('Please enter a username.');
       return;
     }
-
-    // Create a new WebSocket connection.
-    // Use 'ws' for local development and 'wss' for production with HTTPS
-    const ws = new WebSocket('ws://localhost:8080');
+    if (socketRef.current && socketRef.current.readyState !== WebSocket.CLOSED) {
+      console.log('A connection is already open or connecting.');
+      return;
+    }
+    setConnectionStatus('Connecting...');
+    setReceivedMessages([]);
+    const wsUrl = `ws://localhost:8080?username=${encodeURIComponent(username)}`;
+    const ws = new WebSocket(wsUrl);
 
     ws.onopen = () => {
       console.log('WebSocket connection established');
       setConnectionStatus('Connected');
     };
 
+    // --- MODIFIED SECTION START ---
     ws.onmessage = (event) => {
       console.log('Message from server: ', event.data);
-      setReceivedMessages(prevMessages => [...prevMessages, { type: 'server', data: event.data }]);
-    };
+      let serverMessage;
 
-    ws.onclose = () => {
+      try {
+        // Attempt to parse the message as JSON.
+        // This will work for structured messages (chat, info broadcasts).
+        serverMessage = JSON.parse(event.data);
+      } catch (error) {
+        // If parsing fails, it's a plain text message (e.g., the initial welcome message).
+        // We'll wrap it in our standard object format for consistent rendering.
+        console.warn("Received non-JSON message from server, treating as info:", event.data);
+        serverMessage = { type: 'info', content: event.data };
+      }
+      
+      // Add the processed message (either from JSON or the caught plain text) to the state.
+      setReceivedMessages(prevMessages => [...prevMessages, serverMessage]);
+    };
+    // --- MODIFIED SECTION END ---
+
+    ws.onclose = (event) => {
       console.log('WebSocket connection closed');
+      const reason = event.reason || 'Connection lost.';
       setConnectionStatus('Disconnected');
+      setReceivedMessages(prev => [...prev, { type: 'info', content: `Disconnected. ${reason}` }]);
+      socketRef.current = null;
     };
 
     ws.onerror = (error) => {
       console.error('WebSocket error: ', error);
       setConnectionStatus('Error');
+      setReceivedMessages(prev => [...prev, { type: 'info', content: 'Connection error.' }]);
     };
 
-    // Store the WebSocket instance in the ref
     socketRef.current = ws;
-    setSocket(ws);
+  };
 
-    // Cleanup function to close the WebSocket connection when the component unmounts
-    return () => {
-      if (ws.readyState === 1) { // <-- This is important
-        ws.close();
-      }
-    };
-  }, []); // Empty dependency array ensures this effect runs only once
+  const handleDisconnect = () => {
+    if (socketRef.current) {
+      socketRef.current.close(1000, "User clicked disconnect");
+    }
+  };
 
   const sendMessage = () => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN && message.trim()) {
       socketRef.current.send(message);
-      setReceivedMessages(prevMessages => [...prevMessages, { type: 'client', data: message }]);
-      setMessage(''); // Clear input after sending
+      const optimisticMessage = { type: 'message', sender: 'You', text: message };
+      setReceivedMessages(prevMessages => [...prevMessages, optimisticMessage]);
+      setMessage('');
     } else {
       console.log('Cannot send message. WebSocket is not open.');
-      alert('Connection is not open. Please wait or refresh the page.');
+      alert('Connection is not open.');
     }
   };
 
@@ -70,6 +97,29 @@ export default function WebSocketPage() {
     if (event.key === 'Enter') {
       sendMessage();
     }
+  };
+
+  const renderMessage = (msg, index) => {
+    if (msg.type === 'info') {
+      return (
+        <div key={index} className={`${styles.message} ${styles.info}`}>
+          {msg.content}
+        </div>
+      );
+    }
+    if (msg.type === 'message') {
+      const messageClass = msg.sender === 'You' ? styles.self : styles.server;
+      return (
+        <div key={index} className={`${styles.message} ${messageClass}`}>
+          <strong>{msg.sender}:</strong> {msg.text}
+        </div>
+      );
+    }
+    return (
+      <div key={index} className={`${styles.message} ${styles.server}`}>
+        {typeof msg === 'object' ? JSON.stringify(msg) : msg}
+      </div>
+    );
   };
 
   return (
@@ -80,32 +130,56 @@ export default function WebSocketPage() {
           Connection Status: <span className={`${styles.statusIndicator} ${styles[connectionStatus.toLowerCase()]}`}></span> {connectionStatus}
         </p>
 
-        <div className={styles.chatBox}>
-          {receivedMessages.map((msg, index) => (
-            <div key={index} className={`${styles.message} ${styles[msg.type]}`}>
-              {msg.data}
-            </div>
-          ))}
-        </div>
+        {connectionStatus !== 'Connected' && (
+          <div className={styles.connectionArea}>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter your username"
+              className={styles.input}
+              disabled={connectionStatus === 'Connecting...'}
+            />
+            <button
+              onClick={handleConnect}
+              className={styles.button}
+              disabled={connectionStatus === 'Connecting...'}
+            >
+              {connectionStatus === 'Connecting...' ? 'Connecting...' : 'Connect'}
+            </button>
+          </div>
+        )}
 
-        <div className={styles.inputArea}>
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Type your message..."
-            className={styles.input}
-            disabled={connectionStatus !== 'Connected'}
-          />
-          <button
-            onClick={sendMessage}
-            className={styles.button}
-            disabled={connectionStatus !== 'Connected'}
-          >
-            Send
-          </button>
-        </div>
+        {connectionStatus === 'Connected' && (
+          <>
+            <button onClick={handleDisconnect} className={`${styles.button} ${styles.disconnectButton}`}>
+              Disconnect
+            </button>
+
+            <div className={styles.chatBox}>
+              {receivedMessages.map(renderMessage)}
+            </div>
+
+            <div className={styles.inputArea}>
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder="Type your message..."
+                className={styles.input}
+                disabled={connectionStatus !== 'Connected'}
+              />
+              <button
+                onClick={sendMessage}
+                className={styles.button}
+                disabled={connectionStatus !== 'Connected' || !message.trim()}
+              >
+                Send
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </main>
   );
