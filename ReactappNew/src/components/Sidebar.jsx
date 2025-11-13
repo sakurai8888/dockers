@@ -69,14 +69,14 @@ const Sidebar = ({user,closeTaggle}) => {
           } 
 
             <NavLink
-                 to = '/blankpage'
+                 to = '/mynewpage'
                  className = {
                   ({isActive}) => isActive ? isActiveStyle : isNotActiveStyle
                 } 
                 //onClick={handleCloseSidebar}
                 onClick = {handleCloseSidebar}
               >
-                BlankPage
+                Animation
               </NavLink>
               <NavLink
                  to = '/testingpage'

@@ -10,6 +10,7 @@ import Slugdemo from '../components/slugdemo'
 import { client } from '../client'
 import logo from '../assets/logo.png'
 import { userQuery } from '../utils/data'
+import MyNewPage from '../container/MyNewPage'
 import { Testing } from '../components/slugdemo'
 
 
@@ -68,6 +69,7 @@ const Home = () => {
           <Route path = "user-profile/:userId" element={<UerProfile />}/>
           <Route path = "/category/Animals" element={<Animals />}/>
           <Route path = "/testslug/:id/:hash" element={<Slugdemo />}/>
+          <Route path = "/mynewpage" element={<MyNewPage />}/>
           <Route path = "/*" element={<Pins user={user && user}/>}/>
         </Routes>
 

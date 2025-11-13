@@ -2,7 +2,6 @@ import React from 'react'
 import {Routes,Route,useNavigate} from 'react-router-dom'
 import Login from './components/Login';
 import Home from './container/Home';
-import BlankPage from './container/BlankPage'
 import Newsidebar from './components/newsidebar';
 import BlankPage2 from './container/BlankPage2';
 import Myform from './components/myform';
@@ -18,7 +17,6 @@ const App = () => {
     
     <Routes>
       <Route path="login" element={<Login />} />
-      <Route path="blankpage" element={<BlankPage />} />
       <Route path="blankpage2" element={<BlankPage2 />} />
       <Route path="testingpage" element={<Testingpage />} />
       <Route path="myform" element={<Myform/>} />
