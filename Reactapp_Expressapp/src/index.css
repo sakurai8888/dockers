@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+body {
+  font-family: 'Lato',sans-serif;
+  background-color: rgb(255, 255, 255);
+  color: black;
+}
+*/
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+
+h1 {
+  color: rgb(6, 6, 36);
+  font-size:30px
+}
+
+.container {
+  display : flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 10px;
+  flex-wrap: wrap;
+  justify-content: space-between; 
+  color: pink;
+  background-color: bisque;
+
+}
+/*
+.flex {
+  display: flex;
+  background-color: blue;
+  margin: 1%;
+  padding: 5px;
+  flex-wrap: wrap;
+  border: 2px solid black;
+  flex-basis:200px;
+
+}
+*/
+
+
+.divfont {
+  color : black;
+  align-items: center;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+.my-input {
+  @apply bg-gray-600 pl-2 text-left rounded-xl text-white;
+}
+
+.input-error {
+  @apply text-red-900
+}
