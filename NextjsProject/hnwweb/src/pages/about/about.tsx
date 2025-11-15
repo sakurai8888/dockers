@@ -1,12 +1,11 @@
-    // pages/my-page.tsx
-    import type { NextPage } from 'next';
+import type { NextPage } from 'next';
 
-    interface MyPageProps {
-      title: string;
-    }
+interface MyPageProps {
+  title: string;
+}
 
-    const MyNewPage: NextPage<MyPageProps> = ({ title }) => {
-      return <h1>About</h1>;
-    };
+const MyNewPage: NextPage<MyPageProps> = ({ title }) => {
+  return <h1>About</h1>;
+};
 
-    export default MyNewPage;
+export default MyNewPage;

@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: /hnwweb
+      dockerfile: Dockerfile
+      args:
+        # Optional: override from CLI or keep default in Dockerfile
+        NODE_VERSION: "20-alpine"
+    image: nextjs-app:latest
+    container_name: nextjs-web
+    environment:
+      # Ensure production optimizations
+      NODE_ENV: production
+      # Next.js listens on this port inside the container
+      PORT: 3000
+      # If you need Next to bind to all interfaces (usually default), uncomment:
+      # HOSTNAME: 0.0.0.0
+
+      # Add your runtime env vars here (example):
+      # NEXT_PUBLIC_API_BASE_URL: "https://api.example.com"
+      # DATABASE_URL: "postgres://user:pass@host:5432/db"
+    ports:
+      - "3000:3000" # host:container
+    # If you have files the app reads at runtime, mount them here.
+    # For a production-like container, you typically do NOT mount the source.
+    # volumes:
+    #   - ./some-runtime-dir:/app/some-runtime-dir:ro
+    restart: unless-stopped
+
+    # If your app needs outbound DNS/network access only, you can omit networks.
+    # Define networks if you have multiple services (db, cache, etc.).
+    # networks:
+    #   - app-net
+
+# networks:
+#   app-net:
+#     driver: bridge
