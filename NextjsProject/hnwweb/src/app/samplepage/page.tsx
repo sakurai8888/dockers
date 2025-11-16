@@ -33,6 +33,18 @@ export default async function AboutPage() {
           </li>
         ))}
       </ul>
+
+      {/* External link to Google opening in a new tab */}
+      <p>
+        <a
+          href="https://www.google.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-600 underline hover:text-blue-800"
+        >
+          Visit Google
+        </a>
+      </p>
     </main>
   );
 }
