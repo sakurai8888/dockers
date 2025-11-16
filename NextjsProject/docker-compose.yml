@@ -8,7 +8,7 @@ services:
       args:
         NODE_VERSION: "20-alpine"
     image: nextjs-app:latest
-    container_name: nextjs-web
+    #container_name: nextjs-web       # Comment this to scale out the container.
     environment:
       NODE_ENV: production
       PORT: 3000

@@ -110,3 +110,10 @@ docker-compose -f .\docker-compose-postgresql.yaml up -d
 
 
 docker-compose  -f .\docker-compose-postgresql.yaml  down
+
+
+
+
+### Scale up the container.
+
+docker compose up -d --build --scale web=3
