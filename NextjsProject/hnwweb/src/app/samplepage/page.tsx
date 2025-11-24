@@ -1,5 +1,7 @@
-// app/about/page.tsx
+// app/samplepage/page.tsx
 // This is a React Server Component by default (no "use client")
+
+import SampleSearch from './SampleSearch';
 
 type TeamMember = {
   id: string;
@@ -19,32 +21,31 @@ async function getTeam(): Promise<TeamMember[]> {
 // Optional: make this route static with revalidation
 export const revalidate = 300; // seconds
 
+
+
 export default async function AboutPage() {
   const team = await getTeam();
 
   return (
-    <main className="mx-auto max-w-2xl p-6 space-y-4">
-      <h1 className="text-3xl font-semibold">About (TSX)</h1>
-      <p>We build delightful web apps.</p>
-      <ul className="list-disc pl-6">
-        {team.map((m) => (
-          <li key={m.id}>
-            {m.name} — <em>{m.role}</em>
-          </li>
-        ))}
-      </ul>
+    <main className="mx-auto max-w-4xl p-6 space-y-4">
+      <h1 className="text-3xl font-semibold">Sample Search Page</h1>
+      <p>Type in the search box to run a database full-text search.</p>
 
-      {/* External link to Google opening in a new tab */}
-      <p>
-        <a
-          href="https://www.google.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 underline hover:text-blue-800"
-        >
-          Visit Google
-        </a>
-      </p>
+      {/* Client-side interactive search component */}
+      <SampleSearch />
+
+      {/* Keep the existing team list for reference */}
+      <section>
+        <h2 className="text-xl font-semibold">Team</h2>
+        <ul className="list-disc pl-6">
+          {team.map((m) => (
+            <li key={m.id}>
+              {m.name} — <em>{m.role}</em>
+            </li>
+          ))}
+        </ul>
+      </section>
     </main>
   );
 }
+
