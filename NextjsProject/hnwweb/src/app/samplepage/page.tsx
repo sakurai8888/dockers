@@ -32,7 +32,7 @@ export default async function AboutPage() {
       <p>Type in the search box to run a database full-text search.</p>
 
       {/* Client-side interactive search component */}
-      <SampleSearch />
+      {/*<SampleSearch />   */}
 
       {/* Keep the existing team list for reference */}
       <section>
