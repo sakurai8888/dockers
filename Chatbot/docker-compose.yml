@@ -3,7 +3,6 @@ services:
   postgres:
     image: pgvector/pgvector:pg17-trixie
     container_name: vectordb
-    restart: always
     environment:
       POSTGRES_DB: chatbot
       POSTGRES_USER: user
@@ -43,7 +42,6 @@ services:
     build:
       context: ./ingest-python     # 👈 points to folder containing main.py + Dockerfile
     container_name: ingest-python
-    restart: always
     ports:
       - "8000:8000"                # exposes FastAPI endpoint http://localhost:8000
     environment:
