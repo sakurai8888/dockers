@@ -106,6 +106,8 @@ docker run --name postgresql01 -e POSTGRES_PASSWORD=Aa12345678 -e PGDATA=/var/li
 
 ### Or using docker compose file 
 
+docker-compose -f -f .\docker-compose-postgresql.yaml build
+
 docker-compose -f .\docker-compose-postgresql.yaml up -d
 
 
@@ -117,3 +119,10 @@ docker-compose  -f .\docker-compose-postgresql.yaml  down
 ### Scale up the container.
 
 docker compose up -d --build --scale web=3
+
+
+
+
+### Docker image for LangFlow
+
+docker run -it --rm -p 7860:7860 langflowai/langflow:latest

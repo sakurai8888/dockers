@@ -1,6 +1,6 @@
 from fastapi import FastAPI, UploadFile
 from unstructured.partition.pdf import partition_pdf
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.embeddings import OllamaEmbeddings
 from pgvector.psycopg import register_vector
 import psycopg
