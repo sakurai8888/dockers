@@ -126,3 +126,12 @@ docker compose up -d --build --scale web=3
 ### Docker image for LangFlow
 
 docker run -it --rm -p 7860:7860 langflowai/langflow:latest
+
+
+
+
+
+### Run Oracle Docker Image 
+container-registry.oracle.com/database/free
+
+docker run -d --name oracle01 -p 1521:1521 --secret=Aa12345678 --volume oracle-free-lite-data:/opt/oracle/oradata   container-registry.oracle.com/database/free:latest-lite
