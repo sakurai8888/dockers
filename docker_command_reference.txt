@@ -149,6 +149,4 @@ cd .\Redhatlinux8
 
 docker build -t custom-rhel8 .
 
-
-
 docker run -d --name rhel8 -p 2222:22  custom-rhel8
