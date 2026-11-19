@@ -141,7 +141,8 @@ docker run -d --name oracle01 -p 1521:1521 --secret=Aa12345678 --volume oracle-f
 docker run -d --name oracle01 -p 1521:1521 --secret=Aa12345678 --volume oracle-free-lite-data:/opt/oracle/oradata   container-registry.oracle.com/database/free:latest                
 
 
-
+### Oracle 19c
+docker run -d --name oracle-19c -p 1521:1521 -e ORACLE_SID=ora01 -e ORACLE_PWD=Aa12345678 -e ORACLE_CHARACTERSET=WE8MSWIN1252 -v oracle19c_oradata:/opt/oracle/oradata doctorkirk/oracle-19c
 
 
 ### Redhat Linux 
