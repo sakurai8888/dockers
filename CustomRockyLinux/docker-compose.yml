@@ -1,0 +1,21 @@
+services:
+  oceanbase:
+    build: .
+    container_name: oceanbase-ce-standalone
+    hostname: oceanbase
+    ports:
+      - "2881:2881"   # observer MySQL protocol
+      - "2882:2882"   # observer RPC
+      - "2883:2883"   # obproxy MySQL protocol
+      - "2884:2884"   # obproxy prometheus
+    volumes:
+      - obdata:/data
+    ulimits:
+      nofile: 655350
+      nproc: 655350
+    sysctls:
+      - net.core.somaxconn=2048
+    restart: unless-stopped
+
+volumes:
+  obdata:

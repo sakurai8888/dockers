@@ -1,0 +1,35 @@
+oceanbase-ce:
+  servers:
+    - 127.0.0.1
+  global:
+    home_path: /data/observer
+    data_dir: /data/observer/store
+    redo_dir: /data/observer/store
+    devname: eth0
+    mysql_port: 2881
+    rpc_port: 2882
+    zone: zone1
+    # sized for an 8 CPU / 16GB container
+    cpu_count: 8
+    memory_limit: 8G
+    system_memory: 1G
+    datafile_size: 10G
+    log_disk_size: 10G
+    enable_syslog_recycle: true
+    enable_syslog_wf: false
+    max_syslog_file_count: 10
+    root_password: ''
+    enable_strict_kernel_release: false
+
+obproxy-ce:
+  depends:
+    - oceanbase-ce
+  servers:
+    - 127.0.0.1
+  global:
+    listen_port: 2883
+    prometheus_listen_port: 2884
+    home_path: /data/obproxy
+    skip_proxy_sys_private_check: true
+    enable_strict_kernel_release: false
+    enable_metadb_used: false
