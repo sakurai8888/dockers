@@ -151,3 +151,38 @@ cd .\Redhatlinux8
 docker build -t custom-rhel8 .
 
 docker run -d --name rhel8 -p 2222:22  custom-rhel8
+
+
+
+
+### MySQL Docker (with a empty size volume)
+
+
+## Make the mount in Linux OS
+sudo truncate -s 500G /opt/mysql97_sparse.img
+sudo mkfs.ext4 -F -m 0 -i 262144 /opt/mysql97_sparse.img
+sudo mkdir -p /mnt/mysql97_sparse
+sudo mount -o loop /opt/mysql97_sparse.img /mnt/mysql97_sparse
+echo '/opt/mysql97_sparse.img /mnt/mysql97_sparse ext4 loop,defaults 0 0' | sudo tee -a /etc/fstab
+
+
+## Create the volume
+docker volume create --driver local \
+  --opt type=none \
+  --opt device=/mnt/mysql97_sparse \
+  --opt o=bind \
+  mysql97_data
+
+
+
+## Run the Mysql Docker
+docker run -d \
+  --name mysql-9.7 \
+  -e MYSQL_ROOT_PASSWORD=rootpassword \
+  -e MYSQL_DATABASE=mydb \
+  -e MYSQL_USER=myuser \
+  -e MYSQL_PASSWORD=mypassword \
+  -p 3306:3306 \
+  -v mysql97_data:/var/lib/mysql \
+  mysql:9.7
+
