@@ -1,7 +1,9 @@
 FROM rockylinux:9
 
 ENV LANG=en_US.UTF-8 \
-    TZ=Asia/Shanghai
+    TZ=Asia/Hong_Kong
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN dnf install -y epel-release && \
     dnf install -y \
@@ -10,6 +12,11 @@ RUN dnf install -y epel-release && \
         openssh-server openssh-clients \
         python3 vim-minimal less \
     && dnf clean all
+
+# Root login over SSH
+RUN echo 'root:Aa12345678' | chpasswd && \
+    sed -i 's/^#\?PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+    sed -i 's/^#\?PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
 
 # Install OceanBase all-in-one package
 # (provides obd, ob-deploy plugin and a local yum mirror for oceanbase-ce / obproxy-ce)
@@ -26,6 +33,6 @@ RUN chmod +x /entrypoint.sh
 
 VOLUME /data
 
-EXPOSE 2881 2882 2883 2884
+EXPOSE 22 2881 2882 2883 2884
 
 ENTRYPOINT ["/entrypoint.sh"]

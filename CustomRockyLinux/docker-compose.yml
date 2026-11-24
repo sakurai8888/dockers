@@ -4,6 +4,7 @@ services:
     container_name: oceanbase-ce-standalone
     hostname: oceanbase
     ports:
+      - "2222:22"     # SSH (host port 2222 -> container 22)
       - "2881:2881"   # observer MySQL protocol
       - "2882:2882"   # observer RPC
       - "2883:2883"   # obproxy MySQL protocol

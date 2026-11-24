@@ -3,8 +3,9 @@ oceanbase-ce:
     - 127.0.0.1
   global:
     home_path: /data/observer
-    data_dir: /data/observer/store
-    redo_dir: /data/observer/store
+    data_dir: /data/1
+    redo_dir: /data/1
+    # observer logs go to {home_path}/log, which entrypoint.sh symlinks to /data/log1
     devname: eth0
     mysql_port: 2881
     rpc_port: 2882
