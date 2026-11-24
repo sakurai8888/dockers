@@ -1,0 +1,16 @@
+
+mkdir -p /data/observer_data/observer03/images /data/observer_data/observer03/data/1 /data/observer_data/observer03/data/log1
+truncate -s 50G /data/observer_data/observer03/images/data1.img
+truncate -s 50G /data/observer_data/observer03/images/log1.img
+mkfs.ext4 -F /data/observer_data/observer03/images/data1.img
+mkfs.ext4 -F /data/observer_data/observer03/images/log1.img
+cat << 'EOF' >> /etc/fstab
+/data/observer_data/observer03/images/data1.img /data/observer_data/observer03/data/1 auto loop,nofail,x-systemd.requires-mounts-for=/data 0 0
+/data/observer_data/observer03/images/log1.img /data/observer_data/observer03/data/log1 auto loop,nofail,x-systemd.requires-mounts-for=/data 0 0
+EOF
+mount -a
+
+
+chown admin:admin /data/observer_data/observer03/data/1 /data/observer_data/observer03/data/log1
+docker run -d --name observer03 --hostname observer03 --privileged --network bridge --cpus="12.0" --memory="48g" -p 2322:22 -v /data/observer_data/observer03/data/1:/data/1 -v /data/observer_data/observer03/data/log1:/data/log1 --restart unless-stopped rockycustom:latest
+
