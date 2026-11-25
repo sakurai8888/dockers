@@ -14,3 +14,58 @@ mount -a
 chown admin:admin /data/observer_data/observer03/data/1 /data/observer_data/observer03/data/log1
 docker run -d --name observer03 --hostname observer03 --privileged --network bridge --cpus="12.0" --memory="48g" -p 2322:22 -v /data/observer_data/observer03/data/1:/data/1 -v /data/observer_data/observer03/data/log1:/data/log1 --restart unless-stopped rockycustom:latest
 
+
+
+
+
+-- Create the Network 
+docker network create --driver bridge --subnet=172.20.0.0/24 --gateway=172.20.0.1 observer_net
+
+
+
+docker run -d \
+  --name observer01 \
+  --hostname observer01 \
+  --privileged \
+  --network observer_net \
+  --ip 172.20.0.21 \
+  --cpus="12.0" \
+  --memory="48g" \
+  -p 2122:22 \
+  -v /data/observer_data/observer01/data/1:/data/1 \
+  -v /data/observer_data/observer01/data/log1:/data/log1 \
+  --restart unless-stopped \
+  rockycustom:latest
+
+
+
+
+
+
+
+
+
+
+
+docker run -d \
+  --name observer03 \
+  --hostname observer03 \
+  --privileged \
+  --network observer_net \
+  --ip 172.20.0.23 \
+  --cpus="12.0" \
+  --memory="48g" \
+  -p 2322:22 \
+  -v /data/observer_data/observer03/data/1:/data/1 \
+  -v /data/observer_data/observer03/data/log1:/data/log1 \
+  --restart unless-stopped \
+  rockycustom:latest
+
+
+
+## add network to the existing container 
+
+  docker network connect --ip 172.20.0.5 observer_net observer01
+
+
+  docker network connect --ip 172.20.0.11 observer_net oat
