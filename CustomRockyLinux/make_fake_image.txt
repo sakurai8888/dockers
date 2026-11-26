@@ -69,3 +69,7 @@ docker run -d \
 
 
   docker network connect --ip 172.20.0.11 observer_net oat
+
+
+
+
